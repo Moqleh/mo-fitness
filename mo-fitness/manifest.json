@@ -1,0 +1,15 @@
+{
+  "name": "MO Fitness",
+  "short_name": "MO Fitness",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07131d",
+  "theme_color": "#07131d",
+  "lang": "ar",
+  "dir": "rtl",
+  "description": "منصة لياقة مجانية مستقلة بدون تسجيل أو اشتراك.",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
