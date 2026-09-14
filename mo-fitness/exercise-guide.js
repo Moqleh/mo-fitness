@@ -18,7 +18,36 @@ plank:{setup:'حصيرة أو أرض ثابتة. ضع المرفقين تقري�
 deadbug:{setup:'حصيرة. استلق على الظهر وارفع الذراعين والرجلين مع ثني الورك والركبة.',start:'ثبت الجذع بحيث يبقى أسفل الظهر تحت السيطرة دون تقوس كبير.',move:'مد ذراعًا ورجلًا متعاكسين ببطء باتجاه الأرض.',finish:'توقف قبل فقد ثبات الجذع، عد للبداية ثم كرر للجانب الآخر.',breath:'ازفر أثناء المد وحافظ على شد البطن، ثم خذ شهيقًا عند العودة.',safety:'الجودة أهم من مدى الحركة؛ قلل المدى إذا تقوس أسفل الظهر.'},
 carry:{setup:'زوج دمبل أو Farmer Handles ومسار مشي خالٍ من العوائق.',start:'التقط الوزن بطريقة آمنة، قف بطولك مع كتفين مستقرين وجذع مشدود.',move:'امش بخطوات قصيرة وطبيعية مع إبقاء الوزن بجانبي الجسم ومنع الميل الجانبي.',finish:'توقف أولًا عند نهاية المسافة ثم أنزل الوزن باستخدام الوركين والركبتين.',breath:'تنفس بنمط منتظم مع الحفاظ على شد الجذع.',safety:'لا تجرِ بالأوزان ولا تسقطها عند النهاية؛ تأكد أن المسار خالٍ.'}
 };
-function apply(){if(typeof exercises==='undefined')return;exercises.forEach(e=>{const g=guides[e.id];if(!g)return;e.setupAr=g.setup;e.stepsAr=[g.start,g.move,g.finish];e.breathAr=g.breath;e.safetyAr=g.safety;e.stepsEn=e.stepsEn||[];});const original=openExercise;openExercise=function(id){original(id);const e=exercises.find(x=>x.id===id);if(!e||!e.setupAr)return;const root=document.querySelector('#detailRoot .detailMain')||document.querySelector('#detailRoot .detail')||document.querySelector('#detailRoot');if(!root)return;const steps=root.querySelector('.steps');if(steps){const box=document.createElement('section');box.className='panel';box.style.marginTop='10px';box.innerHTML=`<h3>⚙️ الجهاز والتجهيز</h3><p>${e.setupAr}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div style="background:#0a2230;border-radius:9px;padding:10px"><b style="color:#55caff">التنفس</b><p style="margin:5px 0 0">${e.breathAr}</p></div><div style="background:#0a2230;border-radius:9px;padding:10px"><b style="color:#ffc14c">السلامة الخاصة بالتمرين</b><p style="margin:5px 0 0">${e.safetyAr}</p></div></div>`;steps.insertAdjacentElement('beforebegin',box);}}
+const imageSets={
+ bench:['assets/exercises/bench-press/start.jpg','assets/exercises/bench-press/descent.jpg','assets/exercises/bench-press/finish.jpg']
+};
+function apply(){
+ if(typeof exercises==='undefined')return;
+ exercises.forEach(e=>{
+  const g=guides[e.id];if(!g)return;
+  e.setupAr=g.setup;e.stepsAr=[g.start,g.move,g.finish];e.breathAr=g.breath;e.safetyAr=g.safety;e.stepsEn=e.stepsEn||[];
+  if(imageSets[e.id]){e.stepImgs=imageSets[e.id];e.img=imageSets[e.id][0];}
+ });
+ if(typeof stepCard==='function'){
+  stepCard=function(e,n){
+   const src=(e.stepImgs&&e.stepImgs[n])||e.img;
+   return `<article class="step"><div class="stepHead"><span class="num">${n+1}</span>${tx(['وضع البداية','النزول / التنفيذ','الصعود / النهاية'][n],['Start position','Movement','Return / finish'][n])}</div><img src="${src}" alt="${tx(e.ar,e.en)} ${n+1}"><p>${tx(e.stepsAr[n],e.stepsEn[n])}</p></article>`;
+  };
+ }
+ const original=openExercise;
+ openExercise=function(id){
+  original(id);
+  const e=exercises.find(x=>x.id===id);if(!e||!e.setupAr)return;
+  const root=document.querySelector('#detailRoot .detailMain')||document.querySelector('#detailRoot .detail')||document.querySelector('#detailRoot');if(!root)return;
+  if(e.stepImgs){const hero=root.querySelector('.heroPhoto img');if(hero)hero.src=e.stepImgs[0];}
+  const steps=root.querySelector('.steps');
+  if(steps){
+   const box=document.createElement('section');box.className='panel';box.style.marginTop='10px';
+   box.innerHTML=`<h3>⚙️ الجهاز والتجهيز</h3><p>${e.setupAr}</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><div style="background:#0a2230;border-radius:9px;padding:10px"><b style="color:#55caff">التنفس</b><p style="margin:5px 0 0">${e.breathAr}</p></div><div style="background:#0a2230;border-radius:9px;padding:10px"><b style="color:#ffc14c">السلامة الخاصة بالتمرين</b><p style="margin:5px 0 0">${e.safetyAr}</p></div></div>`;
+   steps.insertAdjacentElement('beforebegin',box);
+  }
+ }
+ if(typeof renderExercises==='function')renderExercises();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply);else apply();
 })();
