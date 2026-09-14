@@ -1,0 +1,27 @@
+name: Portfolio quality check
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/js/visitor-counter-fallback.js'
+      - 'index.html'
+      - '.github/workflows/portfolio-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check enhancement JavaScript syntax
+        run: node --check assets/js/visitor-counter-fallback.js
+      - name: Verify required portfolio hooks
+        run: |
+          grep -q 'id="about"' index.html
+          grep -q 'id="apps"' index.html
+          grep -q 'id="game"' index.html
+          grep -q 'visitor-counter-fallback.js' index.html
+          grep -q "id='fields'" assets/js/visitor-counter-fallback.js
+          grep -q "id='journey'" assets/js/visitor-counter-fallback.js
+          grep -q "id='vision'" assets/js/visitor-counter-fallback.js
