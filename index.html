@@ -92,6 +92,6 @@ const visitCountEl=document.getElementById('visitCount');fetch('https://countapi
 const sections=[...document.querySelectorAll('.section')],links=[...document.querySelectorAll('.nav-links a')];window.addEventListener('scroll',()=>{let id='home';sections.forEach(s=>{if(scrollY>=s.offsetTop-120)id=s.id});links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+id))});
 translatePage();
 </script>
-<script src="assets/js/visitor-counter-fallback.js?v=20260911-2" defer></script>
+<script src="assets/js/visitor-counter-fallback.js?v=20260915-1" defer></script>
 </body>
 </html>
