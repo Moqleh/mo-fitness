@@ -1,43 +1,28 @@
-/* MO Fitness smart install button — GitHub-hosted, no device dependency */
+/* MO Fitness smart install — no browser alert dialogs */
 (()=>{
-  let promptEvent=null;
-  const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
-  const isMobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||window.matchMedia('(max-width: 820px)').matches;
-  const isIOS=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const banner=()=>document.getElementById('installBanner');
-  const button=()=>document.getElementById('installBtn');
-  const message=()=>banner()?.querySelector('.installMsg span');
-  const en=()=>document.documentElement.lang==='en';
-  function hide(){banner()?.classList.remove('show')}
-  function show(){
-    if(!isMobile()||isStandalone()){hide();return;}
-    const b=banner(); if(!b)return;
-    b.classList.add('show');
-    const m=message();
-    if(m)m.textContent=isIOS()?(en()?'Add MO Fitness to your Home Screen.':'أضف MO Fitness إلى الشاشة الرئيسية.'):(en()?'Install MO Fitness on your phone.':'ثبّت MO Fitness على جوالك.');
-    const btn=button();
-    if(btn)btn.textContent=en()?'Install':'تثبيت';
-  }
-  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;show();});
-  window.addEventListener('appinstalled',()=>{promptEvent=null;hide();});
-  document.addEventListener('DOMContentLoaded',()=>{
-    if(isMobile()&&!isStandalone())setTimeout(show,400);
-    const btn=button(); if(!btn)return;
-    btn.addEventListener('click',async e=>{
-      e.preventDefault(); e.stopImmediatePropagation();
-      if(isStandalone()){hide();return;}
-      if(promptEvent){
-        const p=promptEvent; promptEvent=null;
-        await p.prompt();
-        const choice=await p.userChoice;
-        if(choice&&choice.outcome==='accepted')hide();
-        return;
-      }
-      if(isIOS()){
-        alert(en()?'On iPhone, tap Share then “Add to Home Screen”. Apple does not allow websites to trigger this automatically.':'على الآيفون اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية». نظام Apple لا يسمح للموقع بتنفيذ هذه الخطوة تلقائيًا.');
-      }else{
-        alert(en()?'Your browser has not offered direct installation yet. Open the browser menu and choose “Install app” or “Add to Home screen”.':'المتصفح لم يفعّل التثبيت المباشر بعد. افتح قائمة المتصفح واختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».');
-      }
-    },true);
-  });
+let promptEvent=null;
+const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const mobile=()=>/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||matchMedia('(max-width:820px)').matches;
+const ios=()=>/iPhone|iPad|iPod/i.test(navigator.userAgent);
+const en=()=>document.documentElement.lang==='en';
+const banner=()=>document.getElementById('installBanner');
+const btn=()=>document.getElementById('installBtn');
+const msg=()=>banner()?.querySelector('.installMsg span');
+function hide(){banner()?.classList.remove('show')}
+function normal(){const m=msg(),b=btn();if(m)m.textContent=en()?'Install MO Fitness on your phone.':'ثبّت MO Fitness على جوالك.';if(b)b.textContent=en()?'Install':'تثبيت'}
+function guide(){const m=msg(),b=btn();if(!m||!b)return;if(ios())m.textContent=en()?'Safari: Share → Add to Home Screen':'Safari: مشاركة ← إضافة إلى الشاشة الرئيسية';else m.textContent=en()?'Browser menu ⋮ → Install app':'قائمة المتصفح ⋮ ← تثبيت التطبيق';b.textContent=en()?'Got it':'حسنًا';b.dataset.guide='1'}
+function show(){if(!mobile()||standalone()){hide();return}normal();banner()?.classList.add('show')}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;show()});
+addEventListener('appinstalled',()=>{promptEvent=null;hide()});
+document.addEventListener('DOMContentLoaded',()=>{
+ if(mobile()&&!standalone())setTimeout(show,350);
+ const b=btn();if(!b)return;
+ b.addEventListener('click',async e=>{
+  e.preventDefault();e.stopImmediatePropagation();
+  if(b.dataset.guide==='1'){delete b.dataset.guide;hide();return}
+  if(standalone()){hide();return}
+  if(promptEvent){const p=promptEvent;promptEvent=null;await p.prompt();const c=await p.userChoice;if(c?.outcome==='accepted')hide();else normal();return}
+  guide();
+ },true);
+});
 })();
