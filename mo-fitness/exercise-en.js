@@ -16,24 +16,15 @@ curl:['Use two equal dumbbells. Stand securely or sit on a bench with a load you
 triceps:['Use a cable station with a straight bar or rope. Set the pulley high and choose a controllable load.','Exhale while pressing down and inhale during the return.','Do not use a load that forces you to lean over the handle. Control the weight stack on the return.'],
 plank:['Use a mat or firm floor. Place forearms down with elbows roughly under the shoulders, extend the legs and support yourself on the toes.','Breathe normally throughout the hold; do not hold your breath.','Position quality matters more than duration. Shorten the hold or use an easier variation if sharp pain occurs.'],
 deadbug:['Use a mat. Lie on your back, raise the arms toward the ceiling and bring the hips and knees to roughly 90 degrees.','Exhale slowly while extending the limbs and inhale as you return to center.','Reduce the arm or leg range immediately if the lower back starts arching out of control.'],
-carry:['Use two dumbbells or farmer handles and a clear walking path. Position the loads beside your feet before lifting.','Breathe steadily while maintaining abdominal tension; do not hold your breath for the whole carry.','Keep the route clear, do not run with the weights, and use a load that does not pull you into a dangerous side lean.']
-};
+carry:['Use two dumbbells or farmer handles and a clear walking path. Position the loads beside your feet before lifting.','Breathe steadily while maintaining abdominal tension; do not hold your breath for the whole carry.','Keep the route clear, do not run with the weights, and use a load that does not pull you into a dangerous side lean.']};
 const tips={bench:['Keep the upper back tight','Do not bounce the bar','Use a fully controllable load'],dbpress:['Do not bang the dumbbells together','Stay controlled','Use a comfortable elbow angle'],pushup:['Brace the core','Keep elbows at a comfortable angle','Keep the neck neutral'],lat:['Never pull behind the neck','Avoid swinging','Initiate with the shoulders'],row:['Keep shoulders down','Do not rock the torso','Drive elbows back'],onearm:['Do not rotate the torso','Row toward the hip','Keep the neck stable'],shoulder:['Avoid excessive back arch','Plant the feet','Control the descent'],lateral:['Use a light load','Lead with the elbows','Avoid swinging'],squat:['Brace before descending','Keep the whole foot down','Use a suitable depth'],rdl:['Keep the bar close','Maintain a neutral spine','Hinge from the hips'],legpress:['Keep pelvis down','Do not hard-lock knees','Use a safe depth'],curl:['Keep elbows stable','Control the lowering','Do not swing'],triceps:['Keep elbows fixed','Use a stable load','Use full controlled range'],plank:['Keep breathing','Do not let hips sag','Start with short holds'],deadbug:['Move slowly','Keep lower back controlled','Use only a controllable range'],carry:['Keep shoulders down','Do not lean sideways','Use steady steps']};
 const mistakes={bench:['Excessive elbow flare','Feet leaving the floor','Dropping the bar too fast'],dbpress:['Lowering beyond control','Excessive lower-back arch','Loose wrists'],pushup:['Hips sagging','Lifting the head','Very short range'],lat:['Leaning back excessively','Pulling only with the arms','Letting the weight snap back'],row:['Shrugging','Torso momentum','Short range'],onearm:['Rotating the body','Shrugging the shoulder','Using momentum'],shoulder:['Unintended leg drive','Excessive back arch','Dropping too fast'],lateral:['Shrugging','Using momentum','Using too much weight'],squat:['Knees collapsing inward','Heels lifting','Losing trunk brace'],rdl:['Turning it into a squat','Rounding the back','Letting the bar drift away'],legpress:['Depth that lifts the pelvis','Knees collapsing inward','Releasing the platform too fast'],curl:['Swinging','Elbows drifting forward','Incomplete range'],triceps:['Moving the shoulder','Excessive forward lean','Half repetitions'],plank:['Hips too high','Lower back sagging','Holding the breath'],deadbug:['Lower back arching','Moving too fast','Holding the breath'],carry:['Moving too fast','Side bending','Uncontrolled grip']};
+const targets={bench:'Chest • Triceps • Front deltoids',dbpress:'Chest • Triceps',pushup:'Chest • Triceps • Core',lat:'Lats • Upper back • Biceps',row:'Mid-back • Lats • Biceps',onearm:'Lats • Mid-back • Biceps',shoulder:'Shoulders • Triceps',lateral:'Side deltoids',squat:'Quadriceps • Glutes • Core',rdl:'Hamstrings • Glutes • Back extensors',legpress:'Quadriceps • Glutes • Hamstrings',curl:'Biceps • Forearms',triceps:'Triceps',plank:'Core • Shoulders • Glutes',deadbug:'Core • Hip stabilizers',carry:'Grip • Core • Traps'};
 function apply(){
-  if(!Array.isArray(window.exercises))return false;
-  window.exercises.forEach(e=>{
-    if(en[e.id]){e.setupEn=en[e.id][0];e.breathEn=en[e.id][1];e.safetyEn=en[e.id][2];}
-    e.tipsEn=tips[e.id]||[];
-    e.mistEn=mistakes[e.id]||[];
-  });
+  const list=typeof exercises!=='undefined'?exercises:window.exercises;
+  if(!Array.isArray(list))return false;
+  list.forEach(e=>{if(en[e.id]){e.setupEn=en[e.id][0];e.breathEn=en[e.id][1];e.safetyEn=en[e.id][2];}e.tipsEn=tips[e.id]||[];e.mistEn=mistakes[e.id]||[];e.targetEn=targets[e.id]||e.target;});
   return true;
 }
-if(!apply()){
-  let attempts=0;
-  const timer=setInterval(()=>{
-    attempts+=1;
-    if(apply()||attempts>=100)clearInterval(timer);
-  },50);
-}
+if(!apply()){let attempts=0;const timer=setInterval(()=>{attempts+=1;if(apply()||attempts>=100)clearInterval(timer)},50)}
 })();
