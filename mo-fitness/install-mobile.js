@@ -18,7 +18,9 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(mobile()&&!standalone())setTimeout(show,350);
  const b=btn();if(!b)return;
  b.addEventListener('click',e=>{
-  e.preventDefault();e.stopImmediatePropagation();
+  // This button owns only the add-to-home-screen guide.  Never stop the
+  // browser's click event: doing so can swallow other UI actions on mobile.
+  e.preventDefault();
   if(standalone()){hide();return}
   if(b.dataset.guide==='1'){normal();return}
   guide();
