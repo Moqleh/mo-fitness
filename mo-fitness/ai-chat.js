@@ -5,6 +5,10 @@ const ar=()=>document.documentElement.lang!=='en';
 const T=(a,e)=>ar()?a:e;
 const hasArabic=text=>/[\u0600-\u06FF]/.test(String(text||''));
 const normalize=text=>String(text||'').toLowerCase().normalize('NFKC').replace(/[ًٌٍَُِّْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[^\u0600-\u06ffa-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim();
+const exercisePhrases=[
+'برنامج رياضي','برنامج تمارين','برنامج تدريبي','جدول تمارين','جدول تدريبي','روتين تمارين','روتين رياضي','خطة تمارين','خطة تدريب','خطة رياضية',
+'workout plan','training plan','exercise plan','workout routine','training routine','exercise routine'
+];
 const exerciseTerms=[
 'تمرين','تمارين','تمرن','تدريب','سكوات','قرفصاء','ضغط','بوش اب','بوش ابس','عقلة','بلانك','لانجز','اندفاع','ديدلفت','رفعة','سحب','تجديف','بنش','دمبل','دنبل','باربل','بار','كيبل','كابل','عضلة','عضلات','صدر','ظهر','كتف','اكتاف','رجل','ارجل','فخذ','بايسبس','ترايسبس','بطن','كور','عدة','عدات','تكرار','تكرارات','مجموعة','مجموعات','احماء','اطالة','تمدد','كارديو',
 'exercise','exercises','workout','workouts','training','train','squat','pushup','push-up','pullup','pull-up','plank','lunge','deadlift','row','bench','dumbbell','barbell','cable','muscle','muscles','chest','back','shoulder','shoulders','legs','leg','biceps','triceps','core','abs','rep','reps','set','sets','warmup','warm-up','stretch','stretching','cardio'
@@ -13,7 +17,7 @@ const blockedTerms=[
 'سياسة','انتخابات','رئيس','حكومة','اخبار','خبر','طقس','سفر','فندق','مطعم','طبخ','وصفة','برمجة','كود','اسهم','استثمار','دين','فتوى','قران','دواء','ادوية','تشخيص','علاج','مرض','سكري','ضغط الدم','حمل','اصابة','اصابات','الم','دوخة',
 'تغذيه','غذاء','غذائي','نظام غذائي','حميه','دايت','اكل','وجبه','سعرات','بروتين','كرياتين','مكمل','مكملات','فيتامين','نوم','النوم','انام','ينام','ساعات النوم','تعافي','politics','election','president','government','news','weather','travel','hotel','restaurant','recipe','cooking','programming','code','stocks','investment','religion','medical','medicine','medication','diagnosis','treatment','disease','diabetes','pregnancy','injury','pain','dizziness','nutrition','diet','food','meal','calorie','calories','protein','creatine','supplement','supplements','vitamin','sleep','recovery'
 ];
-function isExerciseOnlyQuestion(text){const v=normalize(text);if(!v)return false;if(blockedTerms.some(k=>v.includes(normalize(k))))return false;return exerciseTerms.some(k=>v.includes(normalize(k)))}
+function isExerciseOnlyQuestion(text){const v=normalize(text);if(!v)return false;if(blockedTerms.some(k=>v.includes(normalize(k))))return false;if(exercisePhrases.some(k=>v.includes(normalize(k))))return true;return exerciseTerms.some(k=>v.includes(normalize(k)))}
 function scopeReply(text){return hasArabic(text)?'أنا مخصص لأسئلة التمارين فقط: طريقة أداء التمرين، العضلات المستهدفة، المعدات، المجموعات والتكرارات، الإحماء والسلامة أثناء التمرين.':'I only answer exercise questions: exercise form, target muscles, equipment, sets and reps, warm-up, and exercise safety.'}
 function looksLikeScopeFallback(text){const v=normalize(text);return ['اسالني عن التمارين','متخصص في اللياقه البدنيه','برامج التدريب التعافي او التغذيه','ask me about exercise','specialized in fitness','training recovery or sports nutrition'].some(k=>v.includes(normalize(k)))}
 function localExerciseFallback(text){
