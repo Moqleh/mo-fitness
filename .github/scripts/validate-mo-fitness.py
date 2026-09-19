@@ -69,6 +69,11 @@ if not errors:
     if 'deferredPrompt.prompt()' in index:
         errors.append('legacy install handler reintroduced')
 
+    # querySelector ($) returns one element; calling forEach on it breaks all following UI handlers.
+    bad_single_selector = re.findall(r"(?<!\\$)\\$\\([^\\n;]*?\\)\\.forEach\\s*\\(", index)
+    if bad_single_selector:
+        errors.append(f'single-element selector used with forEach: {len(bad_single_selector)} occurrence(s)')
+
     local_re=re.compile(r'(?:\./)?(?:assets/[^?#]+|[A-Za-z0-9._-]+\.(?:html|js|json|svg|xml|txt))$')
     for f in list(ROOT.glob('*.html')) + list(ROOT.glob('*.js')):
         text=f.read_text('utf-8')
