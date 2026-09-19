@@ -97,14 +97,6 @@ function mountToday(){
  $('#moLogNow').onclick=()=>($('#tracker')||$('[id*=track]'))?.scrollIntoView({behavior:'smooth'});
 }
 function refresh(){const m=metrics();if($('#moWeekSessions'))$('#moWeekSessions').textContent=m.week.length;if($('#moWeekSets'))$('#moWeekSets').textContent=m.sets;if($('#moStreak'))$('#moStreak').textContent=m.streak}
-function mountBottom(){
- if($('#moBottomNav'))return;const nav=document.createElement('nav');nav.id='moBottomNav';nav.className='moBottomNav';nav.setAttribute('aria-label',tr('تنقل سريع','Quick navigation'));nav.innerHTML=`
- <button data-mo-go=".hero"><b>⌂</b><span data-mo-ar="الرئيسية" data-mo-en="Home">${tr('الرئيسية','Home')}</span></button>
- <button data-mo-go="#plans"><b>▦</b><span data-mo-ar="البرامج" data-mo-en="Programs">${tr('البرامج','Programs')}</span></button>
- <button data-mo-go="#exercises"><b>◫</b><span data-mo-ar="التمارين" data-mo-en="Exercises">${tr('التمارين','Exercises')}</span></button>
- <button data-mo-go="#tracker"><b>↗</b><span data-mo-ar="التقدم" data-mo-en="Progress">${tr('التقدم','Progress')}</span></button>`;document.body.appendChild(nav);
- nav.onclick=e=>{const b=e.target.closest('[data-mo-go]');if(!b||!nav.contains(b))return;e.preventDefault();const sel=b.dataset.moGo;let target=document.querySelector(sel);if(!target&&sel==='#tracker')target=document.querySelector('[id*=track]')||document.querySelector('.trackerTop');if(target){target.scrollIntoView({behavior:'smooth',block:'start'});if(sel==='#plans')setTimeout(()=>document.getElementById('programGrid')?.scrollIntoView({behavior:'smooth',block:'nearest'}),120)}nav.querySelectorAll('[data-mo-go]').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
-}
 function improveImages(){
  $$('img').forEach(img=>{if(!img.hasAttribute('loading')&&!img.closest('.hero'))img.loading='lazy';img.decoding='async';img.addEventListener('error',()=>{img.style.opacity='.55'},{once:true})})
 }
@@ -112,7 +104,7 @@ function enhanceLogging(){
  const save=$('#saveLog');if(!save||save.dataset.moEnhanced)return;save.dataset.moEnhanced='1';save.addEventListener('click',()=>setTimeout(()=>{refresh();toast('تم حفظ الأداء محليًا ✓','Performance saved locally ✓')},50))
 }
 function translateExtras(){$$('[data-mo-ar][data-mo-en]').forEach(x=>x.textContent=isAr()?x.dataset.moAr:x.dataset.moEn)}
-function boot(){injectStyles();mountToday();mountBottom();improveImages();enhanceLogging();translateExtras();refresh()}
+function boot(){injectStyles();mountToday();improveImages();enhanceLogging();translateExtras();refresh()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 window.addEventListener('pageshow',boot);document.addEventListener('click',e=>{if(e.target.closest('#langBtn'))setTimeout(translateExtras,20)});
 })();
