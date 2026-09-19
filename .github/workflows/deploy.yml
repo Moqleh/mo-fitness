@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - 'mo-fitness/**'
-      - '.github/workflows/deploy-mo-fitness.yml'
+      - '.github/workflows/deploy.yml'
+      - '.github/scripts/validate-mo-fitness.py'
   workflow_dispatch:
 
 permissions:
@@ -24,9 +25,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          for file in mo-fitness/*.js; do
+            node --check "$file"
+          done
+
+      - name: Validate MO Fitness integrity
+        run: python .github/scripts/validate-mo-fitness.py
+
       - uses: actions/configure-pages@v5
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./mo-fitness
+
       - id: deployment
         uses: actions/deploy-pages@v4
