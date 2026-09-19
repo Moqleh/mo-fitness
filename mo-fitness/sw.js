@@ -1,4 +1,4 @@
-const CACHE='mo-fitness-v60';
+const CACHE='mo-fitness-v61';
 const CORE=['./','./index.html','./exercise-guide.js','./exercise-en.js','./dbpress-images.js','./install-mobile.js','./privacy.html','./disclaimer.html','./manifest.json','./icon.svg','./ai-chat.js'];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{const cache=await caches.open(CACHE);await Promise.allSettled(CORE.map(url=>cache.add(url)));await self.skipWaiting()})())});
 self.addEventListener('activate',event=>{event.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)));await self.clients.claim()})())});
