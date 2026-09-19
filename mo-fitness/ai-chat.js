@@ -100,7 +100,7 @@ function refresh(){const m=metrics();if($('#moWeekSessions'))$('#moWeekSessions'
 function mountBottom(){
  if($('#moBottomNav'))return;const nav=document.createElement('nav');nav.id='moBottomNav';nav.className='moBottomNav';nav.setAttribute('aria-label',tr('تنقل سريع','Quick navigation'));nav.innerHTML=`
  <button data-mo-go=".hero"><b>⌂</b><span data-mo-ar="الرئيسية" data-mo-en="Home">${tr('الرئيسية','Home')}</span></button>
- <button data-mo-go="#programs"><b>▦</b><span data-mo-ar="البرامج" data-mo-en="Programs">${tr('البرامج','Programs')}</span></button>
+ <button data-mo-go="#plans"><b>▦</b><span data-mo-ar="البرامج" data-mo-en="Programs">${tr('البرامج','Programs')}</span></button>
  <button data-mo-go="#exercises"><b>◫</b><span data-mo-ar="التمارين" data-mo-en="Exercises">${tr('التمارين','Exercises')}</span></button>
  <button data-mo-go="#tracker"><b>↗</b><span data-mo-ar="التقدم" data-mo-en="Progress">${tr('التقدم','Progress')}</span></button>`;document.body.appendChild(nav);
  $$('[data-mo-go]').forEach(b=>b.onclick=()=>{let target=$(b.dataset.moGo);if(!target&&b.dataset.moGo==='#tracker')target=$('[id*=track]')||$('.trackerTop');target?.scrollIntoView({behavior:'smooth'});$$('[data-mo-go]').forEach(x=>x.classList.remove('active'));b.classList.add('active')})
