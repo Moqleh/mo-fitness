@@ -4,7 +4,7 @@ const ENDPOINT='https://mo-fitness-ai.moh-oglah.workers.dev';
 const ar=()=>document.documentElement.lang!=='en';
 const T=(a,e)=>ar()?a:e;
 const hasArabic=text=>/[\u0600-\u06FF]/.test(String(text||''));
-const normalize=text=>String(text||'').toLowerCase().normalize('NFKC').replace(/[ًٌٍَُِّْـ]/g,'').replace(/[^\u0600-\u06ffa-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim();
+const normalize=text=>String(text||'').toLowerCase().normalize('NFKC').replace(/[ًٌٍَُِّْـ]/g,'').replace(/[أإآ]/g,'ا').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[^\u0600-\u06ffa-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim();
 const exerciseTerms=[
 'تمرين','تمارين','تمرن','تدريب','سكوات','قرفصاء','ضغط','بوش اب','بوش ابس','عقلة','بلانك','لانجز','اندفاع','ديدلفت','رفعة','سحب','تجديف','بنش','دمبل','دنبل','باربل','بار','كيبل','كابل','عضلة','عضلات','صدر','ظهر','كتف','اكتاف','رجل','ارجل','فخذ','بايسبس','ترايسبس','بطن','كور','عدة','عدات','تكرار','تكرارات','مجموعة','مجموعات','احماء','اطالة','تمدد','كارديو',
 'exercise','exercises','workout','workouts','training','train','squat','pushup','push-up','pullup','pull-up','plank','lunge','deadlift','row','bench','dumbbell','barbell','cable','muscle','muscles','chest','back','shoulder','shoulders','legs','leg','biceps','triceps','core','abs','rep','reps','set','sets','warmup','warm-up','stretch','stretching','cardio'
