@@ -88,11 +88,10 @@ function reviveApp(){
  // Rebuild the two dynamic grids so restored BFCache nodes never keep stale handlers.
  renderPrograms();renderChips();renderExercises();renderTracker();
 }
-window.addEventListener('pageshow',e=>{
- if(e.persisted){
-   // A BFCache restore can leave Samsung Internet with a visually restored but stale JS document.
-   location.reload();return;
- }
+window.addEventListener('pageshow',()=>{
+ // Restore the existing document in place. Do not reload from pageshow:
+ // Samsung/Chromium may restore this page from BFCache, and reviveApp rebuilds
+ // dynamic UI and handlers without creating a reload cycle.
  reviveApp()
 });
 function askExternal(url){pendingUrl=url;const box=$('#confirmBox');box.style.display='';box.style.pointerEvents='auto';box.classList.add('open')}$('#cancelExternal').onclick=()=>{const box=$('#confirmBox');box.classList.remove('open');box.style.display='none';box.style.pointerEvents='none';pendingUrl=''};$('#openExternal').onclick=()=>{if(pendingUrl)window.open(pendingUrl,'_blank','noopener');const box=$('#confirmBox');box.classList.remove('open');box.style.display='none';box.style.pointerEvents='none';pendingUrl=''};$('#close').onclick=closeModal;$('#modalBack').onclick=closeModal;$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#confirmBox').classList.remove('open')}if(e.key==='Tab'&&$('#modal').classList.contains('open')){const d=$('#modal'),focusable=[...d.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter(x=>!x.disabled);if(focusable.length){const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}});$$('[data-scroll]').forEach(b=>b.onclick=()=>document.querySelector(b.dataset.scroll).scrollIntoView({behavior:'smooth'}));$('#searchBtn').onclick=()=>{$('#exercises').scrollIntoView({behavior:'smooth'});setTimeout(()=>$('#search').focus(),350)};$('#search').oninput=renderExercises;$('#equipment').onchange=renderExercises;$('#level').onchange=renderExercises;
