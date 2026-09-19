@@ -53,13 +53,16 @@ if not errors:
     for url in [canonical, canonical+'privacy.html', canonical+'disclaimer.html']:
         if url not in sitemap: errors.append(f'sitemap missing {url}')
 
+    # Service worker is intentionally retired while Samsung/BFCache restore is isolated.
+    # Validate the live cleanup contract instead of requiring obsolete SW version parity.
     m_ai = re.search(r'ai-chat\.js\?v=(\d+)', index)
-    m_swreg = re.search(r"register\('sw\.js\?v=(\d+)'", index)
-    m_cache = re.search(r"mo-fitness-v(\d+)", sw)
-    m_swai = re.search(r'ai-chat\.js\?v=(\d+)', sw)
-    versions = [m.group(1) if m else None for m in (m_ai,m_swreg,m_cache,m_swai)]
-    if None in versions or len(set(versions)) != 1:
-        errors.append(f'AI/service-worker versions do not match: {versions}')
+    if not m_ai:
+        errors.append('ai-chat.js cache-buster is missing')
+    if re.search(r"navigator\.serviceWorker\.register\s*\(", index):
+        errors.append('service worker registration was reintroduced while SW is retired')
+    for token in ('getRegistrations()', "pathname.includes('/mo-fitness/')", "startsWith('mo-fitness-')"):
+        if token not in index:
+            errors.append(f'service-worker cleanup token missing: {token}')
 
     required_ai = ['isExerciseOnlyQuestion(message)', "scope:'exercise-only'", 'AbortController', '#moAiBtn', 'برنامج رياضي', 'جدول رياضي']
     for token in required_ai:
