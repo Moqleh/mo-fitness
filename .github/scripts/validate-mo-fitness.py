@@ -70,7 +70,7 @@ if not errors:
         errors.append('legacy install handler reintroduced')
 
     # querySelector ($) returns one element; calling forEach on it breaks all following UI handlers.
-    bad_single_selector = re.findall(r"(?<!\\$)\\$\\([^\\n;]*?\\)\\.forEach\\s*\\(", index)
+    bad_single_selector = re.findall(r"(?<!\$)\$\([^\n;]*?\)\.forEach\s*\(", index)
     if bad_single_selector:
         errors.append(f'single-element selector used with forEach: {len(bad_single_selector)} occurrence(s)')
 
