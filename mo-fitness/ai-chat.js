@@ -103,7 +103,7 @@ function mountBottom(){
  <button data-mo-go="#plans"><b>▦</b><span data-mo-ar="البرامج" data-mo-en="Programs">${tr('البرامج','Programs')}</span></button>
  <button data-mo-go="#exercises"><b>◫</b><span data-mo-ar="التمارين" data-mo-en="Exercises">${tr('التمارين','Exercises')}</span></button>
  <button data-mo-go="#tracker"><b>↗</b><span data-mo-ar="التقدم" data-mo-en="Progress">${tr('التقدم','Progress')}</span></button>`;document.body.appendChild(nav);
- $$('[data-mo-go]').forEach(b=>b.onclick=()=>{let target=$(b.dataset.moGo);if(!target&&b.dataset.moGo==='#tracker')target=$('[id*=track]')||$('.trackerTop');target?.scrollIntoView({behavior:'smooth'});$$('[data-mo-go]').forEach(x=>x.classList.remove('active'));b.classList.add('active')})
+ nav.onclick=e=>{const b=e.target.closest('[data-mo-go]');if(!b||!nav.contains(b))return;e.preventDefault();const sel=b.dataset.moGo;let target=document.querySelector(sel);if(!target&&sel==='#tracker')target=document.querySelector('[id*=track]')||document.querySelector('.trackerTop');if(target){target.scrollIntoView({behavior:'smooth',block:'start'});if(sel==='#plans')setTimeout(()=>document.getElementById('programGrid')?.scrollIntoView({behavior:'smooth',block:'nearest'}),120)}nav.querySelectorAll('[data-mo-go]').forEach(x=>x.classList.remove('active'));b.classList.add('active')}
 }
 function improveImages(){
  $$('img').forEach(img=>{if(!img.hasAttribute('loading')&&!img.closest('.hero'))img.loading='lazy';img.decoding='async';img.addEventListener('error',()=>{img.style.opacity='.55'},{once:true})})
