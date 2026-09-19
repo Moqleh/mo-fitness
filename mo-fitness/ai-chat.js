@@ -50,3 +50,69 @@ form.onsubmit=async e=>{e.preventDefault();const message=input.value.trim();if(!
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();window.addEventListener('pageshow',mount);document.addEventListener('visibilitychange',()=>{if(!document.hidden)mount()});
 })();
+
+/* MO Fitness Experience Layer v50 — additive only; preserves existing structure and images */
+(()=>{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const isAr=()=>document.documentElement.lang!=='en';
+const tr=(a,e)=>isAr()?a:e;
+const LOG_KEY='moFitnessLogsV1', SESSION_KEY='moFitnessSessionsV2';
+const safeJSON=(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch{return f}};
+function injectStyles(){
+ if($('#moExperienceStyles'))return;
+ const s=document.createElement('style');s.id='moExperienceStyles';s.textContent=`
+ :root{--mo-glass:rgba(9,25,36,.78);--mo-ring:rgba(53,194,255,.22)}
+ body{padding-bottom:0}
+ .moToday{padding:24px 0 8px}.moTodayGrid{display:grid;grid-template-columns:1.35fr repeat(3,.65fr);gap:10px}
+ .moTodayMain,.moMetric{border:1px solid var(--line);background:linear-gradient(145deg,rgba(13,29,40,.96),rgba(7,16,24,.96));border-radius:18px;padding:18px;box-shadow:0 16px 45px #0004}
+ .moTodayMain{display:flex;align-items:center;justify-content:space-between;gap:18px;overflow:hidden;position:relative}
+ .moTodayMain:after{content:"MO";position:absolute;inset-inline-end:18px;bottom:-28px;font-size:7rem;font-weight:1000;color:#ffffff06;pointer-events:none}
+ .moEyebrow{color:var(--blue2);font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.moTodayMain h2{font-size:clamp(1.5rem,3vw,2.3rem);margin:4px 0}.moTodayMain p{margin:0;color:var(--mut);font-size:.88rem;max-width:620px}
+ .moTodayActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.moMetric{display:flex;flex-direction:column;justify-content:center;min-height:126px}.moMetric b{font-size:1.8rem;color:#fff}.moMetric span{font-size:.75rem;color:var(--mut)}.moMetric small{color:var(--blue2);margin-top:4px}
+ .moProgress{height:6px;background:#13232d;border-radius:20px;overflow:hidden;margin-top:9px}.moProgress i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:inherit}
+ .moBottomNav{display:none}.moToast{position:fixed;z-index:400;left:50%;bottom:22px;transform:translate(-50%,20px);background:#071722;border:1px solid #28536b;color:#fff;padding:10px 14px;border-radius:12px;box-shadow:0 18px 45px #0009;opacity:0;pointer-events:none;transition:.22s}.moToast.show{opacity:1;transform:translate(-50%,0)}
+ .exercise,.program{will-change:transform}.exercise img,.program img,.heroPhoto img,.step img,.rel img{background:#07131c}.exercise img{transition:transform .28s ease}.exercise:hover img{transform:scale(1.035)}
+ @media(max-width:900px){.moTodayGrid{grid-template-columns:1fr 1fr}.moTodayMain{grid-column:1/-1}}
+ @media(max-width:620px){body{padding-bottom:68px}.moToday{padding-top:14px}.moTodayGrid{grid-template-columns:1fr 1fr;gap:8px}.moTodayMain{display:block;padding:16px}.moMetric{padding:13px;min-height:105px}.moMetric b{font-size:1.45rem}.moTodayGrid .moMetric:last-child{grid-column:1/-1}.moBottomNav{position:fixed;z-index:115;bottom:0;left:0;right:0;height:62px;padding-bottom:env(safe-area-inset-bottom);display:grid;grid-template-columns:repeat(4,1fr);background:rgba(5,11,16,.94);border-top:1px solid #20313c;backdrop-filter:blur(18px)}.moBottomNav button{border:0;background:transparent;color:#91a1ac;font-size:.66rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.moBottomNav button b{font-size:1.05rem;color:#dcecf4}.moBottomNav button.active,.moBottomNav button.active b{color:var(--blue2)}#moAiBtn{bottom:76px!important}.installBanner{bottom:68px!important}}
+ `;document.head.appendChild(s)
+}
+function streak(logs){
+ const days=[...new Set(logs.map(x=>new Date(x.date).toISOString().slice(0,10)))].sort().reverse();if(!days.length)return 0;
+ let n=1,d=new Date(days[0]+'T12:00:00');for(let i=1;i<days.length;i++){const p=new Date(d);p.setDate(p.getDate()-1);if(days[i]===p.toISOString().slice(0,10)){n++;d=p}else break}return n
+}
+function metrics(){
+ const logs=safeJSON(LOG_KEY,[]), now=Date.now(), week=logs.filter(x=>now-Number(x.date)<7*864e5), sets=week.reduce((a,x)=>a+(+x.sets||0),0), volume=Math.round(week.reduce((a,x)=>a+(+x.weight||0)*(+x.reps||0)*(+x.sets||0),0));
+ return {logs,week,sets,volume,streak:streak(logs)}
+}
+function toast(a,e){let t=$('#moToast');if(!t){t=document.createElement('div');t.id='moToast';t.className='moToast';document.body.appendChild(t)}t.textContent=tr(a,e);t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function mountToday(){
+ if($('#moToday'))return;const hero=$('.hero'), stats=$('.stats');if(!hero&&!stats)return;
+ const m=metrics(), box=document.createElement('section');box.id='moToday';box.className='moToday';box.innerHTML=`<div class="wrap"><div class="moTodayGrid">
+ <article class="moTodayMain"><div><span class="moEyebrow" data-mo-ar="لوحة التدريب" data-mo-en="Training dashboard">${tr('لوحة التدريب','Training dashboard')}</span><h2 data-mo-ar="تمرينك. تقدمك. في مكان واحد." data-mo-en="Your workout. Your progress. One place.">${tr('تمرينك. تقدمك. في مكان واحد.','Your workout. Your progress. One place.')}</h2><p data-mo-ar="ابدأ من البرنامج، نفّذ التمرين، وسجّل نتائجك محليًا بدون حساب." data-mo-en="Start your program, train, and save results locally without an account.">${tr('ابدأ من البرنامج، نفّذ التمرين، وسجّل نتائجك محليًا بدون حساب.','Start your program, train, and save results locally without an account.')}</p><div class="moTodayActions"><button class="btn primary" id="moStartNow">${tr('ابدأ تمرينك','Start workout')}</button><button class="btn ghost" id="moLogNow">${tr('سجّل أداءك','Log performance')}</button></div></div></article>
+ <article class="moMetric"><span data-mo-ar="هذا الأسبوع" data-mo-en="This week">${tr('هذا الأسبوع','This week')}</span><b id="moWeekSessions">${m.week.length}</b><small data-mo-ar="سجلات تدريب" data-mo-en="workout logs">${tr('سجلات تدريب','workout logs')}</small><div class="moProgress"><i style="width:${Math.min(100,m.week.length*20)}%"></i></div></article>
+ <article class="moMetric"><span data-mo-ar="المجموعات" data-mo-en="Sets">${tr('المجموعات','Sets')}</span><b id="moWeekSets">${m.sets}</b><small data-mo-ar="خلال 7 أيام" data-mo-en="last 7 days">${tr('خلال 7 أيام','last 7 days')}</small></article>
+ <article class="moMetric"><span data-mo-ar="الاستمرارية" data-mo-en="Streak">${tr('الاستمرارية','Streak')}</span><b id="moStreak">${m.streak}</b><small data-mo-ar="أيام متتالية" data-mo-en="consecutive days">${tr('أيام متتالية','consecutive days')}</small></article>
+ </div></div>`; (stats||hero).insertAdjacentElement('afterend',box);
+ $('#moStartNow').onclick=()=>($('#programs')||$('.programs'))?.scrollIntoView({behavior:'smooth'});
+ $('#moLogNow').onclick=()=>($('#tracker')||$('[id*=track]'))?.scrollIntoView({behavior:'smooth'});
+}
+function refresh(){const m=metrics();if($('#moWeekSessions'))$('#moWeekSessions').textContent=m.week.length;if($('#moWeekSets'))$('#moWeekSets').textContent=m.sets;if($('#moStreak'))$('#moStreak').textContent=m.streak}
+function mountBottom(){
+ if($('#moBottomNav'))return;const nav=document.createElement('nav');nav.id='moBottomNav';nav.className='moBottomNav';nav.setAttribute('aria-label',tr('تنقل سريع','Quick navigation'));nav.innerHTML=`
+ <button data-mo-go=".hero"><b>⌂</b><span data-mo-ar="الرئيسية" data-mo-en="Home">${tr('الرئيسية','Home')}</span></button>
+ <button data-mo-go="#programs"><b>▦</b><span data-mo-ar="البرامج" data-mo-en="Programs">${tr('البرامج','Programs')}</span></button>
+ <button data-mo-go="#exercises"><b>◫</b><span data-mo-ar="التمارين" data-mo-en="Exercises">${tr('التمارين','Exercises')}</span></button>
+ <button data-mo-go="#tracker"><b>↗</b><span data-mo-ar="التقدم" data-mo-en="Progress">${tr('التقدم','Progress')}</span></button>`;document.body.appendChild(nav);
+ $$('[data-mo-go]').forEach(b=>b.onclick=()=>{let target=$(b.dataset.moGo);if(!target&&b.dataset.moGo==='#tracker')target=$('[id*=track]')||$('.trackerTop');target?.scrollIntoView({behavior:'smooth'});$$('[data-mo-go]').forEach(x=>x.classList.remove('active'));b.classList.add('active')})
+}
+function improveImages(){
+ $$('img').forEach(img=>{if(!img.hasAttribute('loading')&&!img.closest('.hero'))img.loading='lazy';img.decoding='async';img.addEventListener('error',()=>{img.style.opacity='.55'},{once:true})})
+}
+function enhanceLogging(){
+ const save=$('#saveLog');if(!save||save.dataset.moEnhanced)return;save.dataset.moEnhanced='1';save.addEventListener('click',()=>setTimeout(()=>{refresh();toast('تم حفظ الأداء محليًا ✓','Performance saved locally ✓')},50))
+}
+function translateExtras(){$$('[data-mo-ar][data-mo-en]').forEach(x=>x.textContent=isAr()?x.dataset.moAr:x.dataset.moEn)}
+function boot(){injectStyles();mountToday();mountBottom();improveImages();enhanceLogging();translateExtras();refresh()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+window.addEventListener('pageshow',boot);document.addEventListener('click',e=>{if(e.target.closest('#langBtn'))setTimeout(translateExtras,20)});
+})();
