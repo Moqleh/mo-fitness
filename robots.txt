@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://moqleh.github.io/mo-fitness/sitemap.xml
+Sitemap: https://moqleh.github.io/mo-fitness/sitemap.txt
