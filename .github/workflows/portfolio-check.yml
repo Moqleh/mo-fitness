@@ -3,9 +3,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'index.html'
-      - 'sitemap.xml'
-      - 'robots.txt'
       - 'mo-fitness/**'
       - '.github/workflows/portfolio-check.yml'
   workflow_dispatch:
@@ -16,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify canonical production entry point
+      - name: Verify deployed fitness artifact
         run: |
           set -euo pipefail
-          grep -q '<title>MO Fitness' index.html
-          grep -q 'https://moqleh.github.io/mo-fitness/' index.html
-          grep -q 'ai-chat.js' index.html
-          grep -q 'exercise-guide.js' index.html
-          grep -q '<loc>https://moqleh.github.io/mo-fitness/</loc>' sitemap.xml
-          test -f 7f8e2d9c4a6b1e3f5d7c9a2b4e6f8d1c.txt
-          grep -q 'Sitemap: https://moqleh.github.io/mo-fitness/sitemap.xml' robots.txt
+          grep -q '<title>MO Fitness' mo-fitness/index.html
+          grep -q 'https://moqleh.github.io/mo-fitness/' mo-fitness/index.html
+          grep -q 'ai-chat.js' mo-fitness/index.html
+          grep -q 'exercise-guide.js' mo-fitness/index.html
+          grep -q '<loc>https://moqleh.github.io/mo-fitness/</loc>' mo-fitness/sitemap.xml
+          test -f mo-fitness/7f8e2d9c4a6b1e3f5d7c9a2b4e6f8d1c.txt
+          grep -q 'Sitemap: https://moqleh.github.io/mo-fitness/sitemap.xml' mo-fitness/robots.txt
