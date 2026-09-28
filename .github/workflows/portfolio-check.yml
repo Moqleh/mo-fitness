@@ -1,10 +1,12 @@
-name: Portfolio quality check
+name: Fitness quality check
 on:
   push:
     branches: [main]
     paths:
-      - 'assets/js/visitor-counter-fallback.js'
       - 'index.html'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'mo-fitness/**'
       - '.github/workflows/portfolio-check.yml'
   workflow_dispatch:
 permissions:
@@ -14,14 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check enhancement JavaScript syntax
-        run: node --check assets/js/visitor-counter-fallback.js
-      - name: Verify required portfolio hooks
+      - name: Verify canonical production entry point
         run: |
-          grep -q 'id="about"' index.html
-          grep -q 'id="apps"' index.html
-          grep -q 'id="game"' index.html
-          grep -q 'visitor-counter-fallback.js' index.html
-          grep -q "id='fields'" assets/js/visitor-counter-fallback.js
-          grep -q "id='journey'" assets/js/visitor-counter-fallback.js
-          grep -q "id='vision'" assets/js/visitor-counter-fallback.js
+          set -euo pipefail
+          grep -q '<title>MO Fitness' index.html
+          grep -q 'https://moqleh.github.io/mo-fitness/' index.html
+          grep -q 'ai-chat.js' index.html
+          grep -q 'exercise-guide.js' index.html
+          grep -q '<loc>https://moqleh.github.io/mo-fitness/</loc>' sitemap.xml
+          test -f 7f8e2d9c4a6b1e3f5d7c9a2b4e6f8d1c.txt
+          grep -q 'Sitemap: https://moqleh.github.io/mo-fitness/sitemap.xml' robots.txt
