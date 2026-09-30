@@ -32,4 +32,5 @@ jobs:
       - name: Verify published sitemap
         env:
           SITE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: curl --fail --silent --show-error --location --retry 8 "${SITE_URL%/}/sitemap.xml" | grep -Fq '<urlset'
+        run: curl --fail --silent --show-error --location --retry 8 --output /tmp/sitemap.xml "${SITE_URL%/}/sitemap.xml"
+          grep -Fq '<urlset' /tmp/sitemap.xml
